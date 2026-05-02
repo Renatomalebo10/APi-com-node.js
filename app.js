@@ -1,30 +1,36 @@
 const express = require('express');
-const db = require('./db');
 const path = require('path');
+const db = require('./db');
 const app = express();
 
+// Configurações essenciais
 app.use(express.json());
-// Esta linha faz o Node servir os arquivos da pasta public (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota para Listar
+// Rota: Listar Carros
 app.get('/carros', (req, res) => {
-    db.query('SELECT * FROM carros', (err, results) => {
-        if (err) return res.status(500).json(err);
+    const sql = 'SELECT * FROM carros';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ erro: err.message });
         res.json(results);
     });
 });
 
-// Rota para Cadastrar
+// Rota: Cadastrar Carro
 app.post('/carros', (req, res) => {
     const { marca, modelo, ano, cor } = req.body;
     const sql = 'INSERT INTO carros (marca, modelo, ano, cor) VALUES (?, ?, ?, ?)';
+    
     db.query(sql, [marca, modelo, ano, cor], (err, result) => {
-        if (err) return res.status(500).json(err);
-        res.send('Carro cadastrado com sucesso!');
+        if (err) {
+            console.error("Erro no MySQL:", err.message);
+            return res.status(500).json({ erro: err.message });
+        }
+        res.status(201).json({ mensagem: 'Carro salvo!' });
     });
 });
 
-app.listen(3000, () => {
-    console.log('Servidor rodando em http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });

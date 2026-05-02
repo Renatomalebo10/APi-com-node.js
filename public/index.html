@@ -2,23 +2,69 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Carros - ITEL</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Frota Renato - ITEL</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; }
+        input { width: 93%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .carro-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚗 Frota Renato</h1>
-        <form id="carForm">
+    <div class="card">
+        <h2>🚗 Cadastro de Carros</h2>
+        <form id="formCarro">
             <input type="text" id="marca" placeholder="Marca" required>
             <input type="text" id="modelo" placeholder="Modelo" required>
             <input type="number" id="ano" placeholder="Ano" required>
             <input type="text" id="cor" placeholder="Cor" required>
-            <button type="submit">Cadastrar Carro</button>
+            <button type="submit">Salvar Carro</button>
         </form>
-
-        <h2>Carros Cadastrados</h2>
-        <div id="listaCarros"></div>
+        <hr>
+        <h3>Lista de Veículos</h3>
+        <div id="lista"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const form = document.getElementById('formCarro');
+        const listaDiv = document.getElementById('lista');
+
+        async function carregar() {
+            const res = await fetch('/carros');
+            const carros = await res.json();
+            listaDiv.innerHTML = carros.map(c => `
+                <div class="carro-item">
+                    <strong>${c.marca} ${c.modelo}</strong><br>
+                    <small>Ano: ${c.ano} | Cor: ${c.cor}</small>
+                </div>
+            `).join('');
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                ano: document.getElementById('ano').value,
+                cor: document.getElementById('cor').value
+            };
+
+            const res = await fetch('/carros', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                form.reset();
+                carregar();
+            } else {
+                alert("Erro ao cadastrar. Verifique o terminal do VS Code.");
+            }
+        };
+
+        carregar();
+    </script>
 </body>
 </html>

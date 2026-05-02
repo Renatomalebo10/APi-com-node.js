@@ -1,20 +1,22 @@
 const carForm = document.getElementById('carForm');
 const listaCarros = document.getElementById('listaCarros');
 
-// Função para buscar e mostrar carros
 async function carregarCarros() {
     const res = await fetch('/carros');
     const carros = await res.json();
+    
+    // Retificação do undefined: os nomes das propriedades devem ser minúsculos
     listaCarros.innerHTML = carros.map(car => `
-        <div class="car-item">
-            <strong>${car.marca} ${car.modelo}</strong> - ${car.ano} (${car.cor})
+        <div class="car-item" style="border-bottom: 1px solid #ccc; padding: 10px;">
+            <strong>${car.marca} ${car.modelo}</strong><br>
+            <span>Ano: ${car.ano} | Cor: ${car.cor}</span>
         </div>
     `).join('');
 }
 
-// Evento de envio do formulário
 carForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
     const data = {
         marca: document.getElementById('marca').value,
         modelo: document.getElementById('modelo').value,
@@ -22,14 +24,19 @@ carForm.addEventListener('submit', async (e) => {
         cor: document.getElementById('cor').value
     };
 
-    await fetch('/carros', {
+    const response = await fetch('/carros', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
 
-    carForm.reset();
-    carregarCarros(); // Atualiza a lista na hora
+    if (response.ok) {
+        carForm.reset();
+        await carregarCarros(); // Atualiza a lista automaticamente
+    } else {
+        alert("Erro ao cadastrar no servidor");
+    }
 });
 
+// Carrega os carros assim que a página abre
 carregarCarros();
