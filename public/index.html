@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Carros - ITEL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Frota Renato</h1>
+        <form id="carForm">
+            <input type="text" id="marca" placeholder="Marca" required>
+            <input type="text" id="modelo" placeholder="Modelo" required>
+            <input type="number" id="ano" placeholder="Ano" required>
+            <input type="text" id="cor" placeholder="Cor" required>
+            <button type="submit">Cadastrar Carro</button>
+        </form>
+
+        <h2>Carros Cadastrados</h2>
+        <div id="listaCarros"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
