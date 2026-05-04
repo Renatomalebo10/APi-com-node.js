@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '', // Deve ser a mesma senha do comando SQL acima
+  password: '',
   database: 'frota_db'
 });
 
